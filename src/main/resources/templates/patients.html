@@ -10,7 +10,9 @@
 <div class="page-container">
     <h1>Pacientes registrados</h1>
     <div class="actions">
-        <a class="btn btn-primary" th:href="@{/patients/new}">Registrar paciente</a>
+        <span sec:authorize="hasAnyRole('ADMIN', 'VETERINARIO')">
+            <a class="btn btn-primary" th:href="@{/patients/new}">Registrar paciente</a>
+        </span>
         <a class="btn btn-secondary" th:href="@{/home}">Volver a inicio</a>
     </div>
     <div class="table-wrapper">
