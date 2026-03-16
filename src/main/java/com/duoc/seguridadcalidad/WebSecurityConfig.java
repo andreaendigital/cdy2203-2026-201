@@ -21,11 +21,17 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/home").permitAll()
-                .requestMatchers("/**.css").permitAll()
-                .anyRequest().authenticated()
-            )
+        .authorizeHttpRequests((requests) -> requests
+            .requestMatchers("/", "/home", "/login", "/**.css").permitAll()
+            
+            // EL VETERINARIO Y ADMIN gestionan pacientes
+            .requestMatchers("/patients/**").hasAnyRole("ADMIN", "VETERINARIO")
+            
+            // LA RECEPCIONISTA Y ADMIN gestionan citas
+            .requestMatchers("/appointments/**").hasAnyRole("ADMIN", "RECEPCIONISTA")
+            
+            .anyRequest().authenticated()
+        )
             .formLogin((form) -> form
                 .loginPage("/login")
                 .permitAll()
@@ -40,17 +46,22 @@ public class WebSecurityConfig {
     @Description("In memory Userdetails service registered since DB doesn't have user table ")
     public UserDetailsService users() {
         // The builder will ensure the passwords are encoded before saving in memory
-        UserDetails user = User.builder()
-                .username("user")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER")
-                .build();
         UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER", "ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(user, admin);
+            .username("admin")
+            .password(passwordEncoder().encode("admin123"))
+            .roles("ADMIN").build();
+
+        UserDetails vet = User.builder()
+            .username("vet01")
+            .password(passwordEncoder().encode("vet123"))
+            .roles("VETERINARIO").build();
+
+        UserDetails recep = User.builder()
+            .username("recep01")
+            .password(passwordEncoder().encode("recep123"))
+            .roles("RECEPCIONISTA").build();
+
+        return new InMemoryUserDetailsManager(admin, vet, recep);
     }
 
     @Bean
