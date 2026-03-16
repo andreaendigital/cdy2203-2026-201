@@ -10,7 +10,10 @@
 <div class="page-container">
     <h1>Citas agendadas</h1>
     <div class="actions">
-        <a class="btn btn-primary" th:href="@{/appointments/new}">Agendar cita</a>
+        <span sec:authorize="hasAnyRole('ADMIN', 'RECEPCIONISTA')">
+            <a class="btn btn-primary" th:href="@{/appointments/new}">Agendar cita</a>
+        </span>
+        
         <a class="btn btn-secondary" th:href="@{/home}">Volver a inicio</a>
     </div>
     <div class="table-wrapper">
