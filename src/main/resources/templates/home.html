@@ -12,11 +12,23 @@
         <h1 th:text="|Bienvenido a ${name}!|"></h1>
         <p>Gestiona pacientes de tu veterinaria de forma rápida y segura.</p>
     </header>
-
+<!--
     <section class="home-actions">
         <a class="btn btn-primary" th:href="@{/login}">Iniciar sesión</a>
         <a class="btn btn-secondary" th:href="@{/patients}">Ver pacientes</a>
         <a class="btn btn-secondary" th:href="@{/appointments}">Ver citas</a>
+    </section>
+-->
+    <section class="home-actions">
+        <a sec:authorize="!isAuthenticated()" class="btn btn-primary" th:href="@{/login}">Iniciar sesión</a>
+
+        <a sec:authorize="hasAnyRole('ADMIN', 'VETERINARIO')" class="btn btn-secondary" th:href="@{/patients}">Ver pacientes</a>
+
+        <a sec:authorize="hasAnyRole('ADMIN', 'RECEPCIONISTA')" class="btn btn-secondary" th:href="@{/appointments}">Ver citas</a>
+
+        <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+        </form>
     </section>
 
     <section sec:authorize="isAuthenticated()" class="welcome-auth">
